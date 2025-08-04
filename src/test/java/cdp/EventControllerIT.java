@@ -41,7 +41,6 @@ class EventControllerIT {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isNotEmpty())
-            .andExpect(jsonPath("$", hasSize(5)))
             .andExpect(jsonPath("$.length()").value(5))
             .andExpect(jsonPath("$[0].title").value("GrasPop Metal Meeting"));
   }
@@ -54,7 +53,7 @@ class EventControllerIT {
     Event initialEvent = eventRepository.findById(idToDelete).orElse(null);
 
     mvc.perform(MockMvcRequestBuilders.delete("/api/events/{id}", idToDelete))
-            .andExpect(status().isOk());;
+            .andExpect(status().isOk());
 
     Event eventDeleted = eventRepository.findById(idToDelete).orElse(null);
 
@@ -96,6 +95,17 @@ class EventControllerIT {
     Assertions.assertEquals("A very very very very cool comment :D", eventUpdated.getComment());
     Assertions.assertEquals(4,eventUpdated.getNbStars());
 
+  }
+
+  @Test
+  @DisplayName("Should return an event containing a member with wa in his name")
+  public void testSearchEvent() throws Exception {
+    String query = "wa";
+    mvc.perform(MockMvcRequestBuilders.get("/api/events/search/{query}", query)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$.length()").value(1));
   }
 
 }
