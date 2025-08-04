@@ -1,53 +1,47 @@
-## FIX : delete and update not working ##
+######### FIX : delete and update not working #########
 
-# DELETE :
+### DELETE :
 
-I clicked on the "remove" button but it didn't work.
-I noticed in the browser that the DELETE request was sent,
-but I didn't see any DELETE SQL query being executed.
-That led me to suspect a misconfiguration.
+- I clicked on the "remove" button but it didn't work.
+- I noticed in the browser that the DELETE request was sent,but I didn't see any DELETE SQL query being executed.
+-> suspicion of misconfiguration.
 
-I inspected the controller, service, and repository layers,
-and I found that the repository was marked as 'readonly = true'.
+- I inspected the controller, service and repository,
+-> And I found that the repository was marked as 'readonly = true'.
 
-=> FIX: I removed 'readonly = true' from the repository config.
+===> FIX: I removed 'readonly = true' from the repository config.
 Now the DELETE operation works correctly.
 
 
-# UPDATE :
+### UPDATE :
 
-When writing a comment, the PUT request was triggered.
-However, the controller endpoint had no code to handle it.
+- When writing a comment, the PUT request was triggered.
+- However, the controller endpoint had no code to handle it.
 
-=> FIX: I added a method in the service that calls the 'save' method.
-But then I encountered this error:
+===> FIX: I added a method in the service that calls the 'save' method.
 
-org.hibernate.TransientObjectException:
-object references an unsaved transient instance - save the transient instance before flushing
+- But then I encountered this error:
+"org.hibernate.TransientObjectException: object references an unsaved transient instance - save the transient instance before flushing"
 
-The problem came from some objects being returned without IDs,
-causing Hibernate to try to recreate them in the DB.
+The problem came from some objects being returned without IDs, causing Hibernate to try to recreate them in the DB.
 
-I had two options:
- - Update the frontend to include and send all necessary IDs
- - Or modify the backend method to reload all event data before updating
+-> I had two options:
+        - Update the frontend to include and send all necessary IDs
+        - Or modify the backend method to reload all event data before updating
 
-=> I chose to fix it in the backend (since the frontend is fully tested and shouldn't be modified).
 
-So my strategy was:
- - Reload the Event from the DB using its ID
- - Merge only the fields that needed to be updated
+==> I chose to fix it in the backend (since the frontend is fully tested and shouldn't be modified).
+==> So my strategy was:
+    - Reload the Event from the DB using its ID
+    - Merge only the fields that needed to be updated
 
 Then everything worked fine :)
 
 
 ## BEFORE Implementing New Functionality ##
 
-Before adding new features,
-I wrote integration tests for all existing methods to validate common use cases.
-
-I also added missing unit tests before starting to implement the search with filters,
-following a TDD (Test Driven Development) approach.
+- Before adding new features, I wrote integration tests for all existing methods to validate common use cases.
+- I also added missing unit tests before starting to implement the search with filters,to work with TDD methods.
 
 
 ## ADDING NEW FUNCTIONALITY ##
