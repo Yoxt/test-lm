@@ -14,7 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -105,7 +105,27 @@ class EventControllerIT {
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$.length()").value(1));
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].bands.length()").value(5))
+            .andExpect(jsonPath("$[0].bands[?(@.name == 'Metallica [4]')].members[*].name", hasItem("Queen Anika Walsh")));
+
   }
+
+  @Test
+  @DisplayName("Should return filtered event and format with [count] in title and bands")
+  public void testSearchEventWithCountInTitleAndBandName() throws Exception {
+    String query = "Wa";
+
+    mvc.perform(MockMvcRequestBuilders.get("/api/events/search/{query}", query)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].bands.length()").value(5))
+            .andExpect(jsonPath("$[0].title").value("GrasPop Metal Meeting [5]"))
+            .andExpect(jsonPath("$[0].bands[*].name", hasItem("Metallica [4]")))
+            .andExpect(jsonPath("$[0].bands[?(@.name == 'Metallica [4]')].members.length()").value(4));
+  }
+
 
 }

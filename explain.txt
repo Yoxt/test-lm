@@ -1,14 +1,16 @@
-1 - delete and update not work
-- DELETE :
+## FIX : delete and update not working ##
+# DELETE :
+
 I clicked on the remove button and it does not work
 , i saw on my browser that request delete has been send , but i don't see DELETE sql remove , so i supposed that it was a misconfiguration somewhere.
 And then i watched the class , service and then repo , and i found that 'readonly" true .
 
-- UPDATE :
+# UPDATE :
+
 Writing a comment , put call has been call.
 I check the controller and see that there is no code in the endpoint
 so i create a method in the service that call save method.
-But i've an error that blocked me a little bit :
+But I've an error that blocked me a little bit :
 org.hibernate.TransientObjectException: object references an unsaved transient instance - save the transient instance before flushing:
 
 The problem was that some object were returned without ID , so it tried to recreate them in the database.
@@ -25,4 +27,33 @@ So the strategy I used was the following one :
 
 Then it was OK :) !
 
-I Wrote unit test for all existing method to valid common usecase, and now i can implements new methods
+## BEFORE Implementings new functionality ##
+
+I Wrote integration test for all existing method to valid common usecase, and now i can implements new methods
+I also wrote missing unit test before starting
+ to implements search with filter method to do it as TDD method
+
+
+## ADDING NEW FUNCTIONALITY ##
+
+Then I start to implements new methods using TDD.
+I start my test (he return me not ok)
+I implements the methods logic in the service
+
+Then my unit test was OK
+Then I wrote integration test for this functionnality.
+
+I saw that there was no details about the search criteria ,
+I made a not "case sensitive" search that is more user-friendly and common use case.
+
+## EDITING NEW FUNCTIONALITY ##
+I Write a new unit test in the service who's testing the new feature
+The test is false
+
+- I'm adding new function in the service
+- This second function is called in the controller
+because i want to split this from the search criteria service function.
+
+Test passed
+I also add integration test
+

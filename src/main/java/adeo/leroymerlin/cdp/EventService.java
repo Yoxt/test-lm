@@ -78,4 +78,19 @@ public class EventService {
     }
 
 
+    /**
+     *  Add at end of event title : [ number of band ]
+     *  Add at end of bands name : [ number of member ]
+     * @param events
+     */
+    public void addCountToEventAndBrandTitle(List<Event> events){
+        events.forEach(event -> {
+            // Add at end of event title : [ number of band ]
+            event.setTitle(event.getTitle() + " [" + event.getBands().size() + "]");
+            // Add at end of bands name : [ number of member ]
+            event.getBands().forEach(band -> {
+                band.setName(band.getName() + " [" + band.getMembers().size() + "]");
+            });
+        });
+    }
 }

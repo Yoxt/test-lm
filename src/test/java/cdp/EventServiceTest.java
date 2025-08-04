@@ -124,6 +124,35 @@ public class EventServiceTest {
 
     }
 
+
+
+
+    @Test
+    @DisplayName("Should return filtered event with [count] at end of title and band names")
+    void test_getFilteredEventWithCountAtEndOfTitleAndNames() {
+        // GIVEN
+        String filteredName = "Dup";
+        prepareFilteredEventMock();
+        List<Event> events = eventService.getFilteredEvents(filteredName);
+
+        // WHEN
+        eventService.addCountToEventAndBrandTitle(events);
+
+        // THEN
+        assertEquals(1, events.size());
+
+        Event event = events.getFirst();
+        int bandsCount = event.getBands().size();
+        assertEquals("Title event 1 [2]",event.getTitle());
+        assertEquals(2,bandsCount);
+
+        List<Band> bands = event.getBands().stream().toList();
+
+        assertEquals("BadGroup ["+bands.get(0).getMembers().size()+"]", bands.get(0).getName());
+        assertEquals("BadGroup ["+bands.get(1).getMembers().size()+"]", bands.get(1).getName());
+
+    }
+
     private void assertMemberNameExists(List<Band> resultBand,String memberName,boolean memberExists) {
         assertEquals(memberExists,
                 resultBand.stream().anyMatch(band ->
@@ -150,7 +179,7 @@ public class EventServiceTest {
         band1.setName("BadGroup");
         band1.setMembers(Set.of(member1,member2));
 
-        band2.setName("BadGroup2");
+        band2.setName("BadGroup");
         band2.setMembers(Set.of(member4));
 
         event1.setBands(Set.of(band1,band2));

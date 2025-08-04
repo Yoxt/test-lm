@@ -31,7 +31,9 @@ public class EventController {
      */
     @GetMapping(value = "/search/{query}")
     public List<Event> findEvents(@PathVariable String query) {
-        return eventService.getFilteredEvents(query);
+        List<Event> events = eventService.getFilteredEvents(query);
+        eventService.addCountToEventAndBrandTitle(events);
+        return events;
     }
 
     /**
