@@ -4,10 +4,10 @@
 
 - I clicked on the "remove" button but it didn't work.
 - I noticed in the browser that the DELETE request was sent,but I didn't see any DELETE SQL query being executed.
--> suspicion of misconfiguration.
+  -> suspicion of misconfiguration.
 
 - I inspected the controller, service and repository,
--> And I found that the repository was marked as 'readonly = true'.
+  -> And I found that the repository was marked as 'readonly = true'.
 
 ===> FIX: I removed 'readonly = true' from the repository config.
 Now the DELETE operation works correctly.
@@ -21,19 +21,19 @@ Now the DELETE operation works correctly.
 ===> FIX: I added a method in the service that calls the 'save' method.
 
 - But then I encountered this error:
-"org.hibernate.TransientObjectException: object references an unsaved transient instance - save the transient instance before flushing"
+  "org.hibernate.TransientObjectException: object references an unsaved transient instance - save the transient instance before flushing"
 
 The problem came from some objects being returned without IDs, causing Hibernate to try to recreate them in the DB.
 
 -> I had two options:
-        - Update the frontend to include and send all necessary IDs
-        - Or modify the backend method to reload all event data before updating
+- Update the frontend to include and send all necessary IDs
+- Or modify the backend method to reload all event data before updating
 
 
 ==> I chose to fix it in the backend (since the frontend is fully tested and shouldn't be modified).
 ==> So my strategy was:
-    - Reload the Event from the DB using its ID
-    - Merge only the fields that needed to be updated
+- Reload the Event from the DB using its ID
+- Merge only the fields that needed to be updated
 
 Then everything worked fine :)
 
@@ -46,11 +46,11 @@ Then everything worked fine :)
 
 ## ADDING NEW FUNCTIONALITY ##
 
-I started implementing new methods using TDD:
- - Wrote a failing unit test
- - Implemented the logic in the service
- - The test then passed successfully
- - Added integration tests to validate the functionality
+I started implementing new methods :
+- Wrote a failing unit test
+- Implemented the logic in the service
+- The test then passed successfully
+- Added integration tests to validate the functionality
 
 I noticed there were no constraints on the search criteria,
 so I implemented a case-insensitive search — it's more user-friendly and better matches real usage.
@@ -58,12 +58,10 @@ so I implemented a case-insensitive search — it's more user-friendly and bette
 
 ## EDITING NEW FUNCTIONALITY ##
 
-I wrote a new unit test in the service to test the new feature — it failed (as expected in TDD).
-
-Then:
- - I added a new function in the service
- - This second function was called from the controller
-   (I wanted to separate concerns from the main search criteria logic)
-
-=> The test passed
-=> I also added integration tests
+- I wrote a new unit test in the service to test the new feature -> FAILED
+- I added a new function in the service
+- This second function was called from the controller
+  (I wanted to split responsability from the main search criteria logic)
+- Test passed
+- Adding new integration tests (had somes difficult because Set order is not the same at every execution).
+ 
